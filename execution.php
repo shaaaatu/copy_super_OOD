@@ -11,7 +11,7 @@ class Execution
 	{
 		$this->t = $t;
 		$this->config = $config;
-		$this->db = $db;
+		$this->db = $db->getDB();
 	}
 
 	public static function getInstance(Logger $t, Config $config, Database $db)
@@ -26,10 +26,12 @@ class Execution
 	public function executeRequest()
 	{
 		$this->t->log("Executing...");
+		$request_type = $this->config->get('request_type');
+		$request_data = $this->config->get('request_data');
 		foreach ($this->config->get('services') as $key => $service)
 		{
-			if (in_array($this->config->get('request_type'), $service))
-				require_once $_SERVER['DOCUMENT_ROOT'] . "/service/" . $key . "/" . $this->config->get('request_type') . ".php";
+			if (in_array($request_type, $service))
+				require_once $_SERVER['DOCUMENT_ROOT'] . "/service/" . $key . "/" . $request_type . ".php";
 		}
 		return ($this->output);
 	}
